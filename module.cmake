@@ -1,9 +1,9 @@
 # The module name
 # Must be unique for an entire Aversive++ distribution
-set(NAME template-module)
+set(NAME feetech)
 
 # Modules that the current module depends on
-set(DEPENDENCIES)
+set(DEPENDENCIES stream)
 
 # Startup files
 set(STARTUP)
