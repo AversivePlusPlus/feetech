@@ -3,7 +3,7 @@
 set(NAME feetech)
 
 # Modules that the current module depends on
-set(DEPENDENCIES stream)
+set(DEPENDENCIES stream container)
 
 # Startup files
 set(STARTUP)
