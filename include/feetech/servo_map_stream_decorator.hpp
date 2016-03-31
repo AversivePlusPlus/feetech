@@ -2,6 +2,7 @@
 #define FEETECH_SERVO_MAP_STREAM_DECORATOR_HPP
 
 #include <feetech/bus_frame_stream_decorator.hpp>
+#include <stream/random_access_stream.hpp>
 
 namespace Feetech {
 
