@@ -48,6 +48,17 @@ namespace Feetech {
       _stream.putChar(0);
     }
 
+    inline bool isTorqueEnabled(u8 id) {
+      u8 ret = 0;
+
+      _stream.setServo(id);
+      _stream.seek(Protocol::P_TORQUE_ENABLE);
+      _stream.read(ptr(ret), sizeof(ret));
+
+      return ret;
+    }
+
+
     inline void setPosition(u8 id, u16 pos) {
       u16 npos = network2host(pos);
 
