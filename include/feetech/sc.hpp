@@ -79,8 +79,15 @@ namespace Feetech {
 
     inline void setId(u8 id, u8 new_id) {
       _stream.setServo(id);
+
+      _stream.seek(Protocol::P_LOCK);
+      _stream.putChar(0);
+
       _stream.seek(Protocol::P_ID);
       _stream.putChar(new_id);
+
+      _stream.seek(Protocol::P_LOCK);
+      _stream.putChar(1);
     }
 
     inline s16 getLoad(u8 id) {
