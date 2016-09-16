@@ -7,15 +7,15 @@
 
 namespace Feetech {
 
-  template<u16 BUFFER_SIZE, typename Stream>
-  class BusFrameStreamDecorator : ::Stream::OutputStream<BusFrameStreamDecorator<BUFFER_SIZE, Stream>> {
+  template<u16 BUFFER_SIZE, typename _Stream>
+  class BusFrameStreamDecorator : Stream::OutputStream<BusFrameStreamDecorator<BUFFER_SIZE, _Stream>> {
   private:
-    Stream& _stream;
+    _Stream& _stream;
     Container::Buffer<BUFFER_SIZE, u8> _write_buffer;
     u8 _id;
 
   public:
-    BusFrameStreamDecorator(Stream& stream)
+    BusFrameStreamDecorator(_Stream& stream)
       : _stream(stream), _id(0) {
     }
 

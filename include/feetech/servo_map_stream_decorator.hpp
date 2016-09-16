@@ -7,13 +7,13 @@
 
 namespace Feetech {
 
-  template<u8 BUFFER_SIZE, typename Stream>
+  template<u8 BUFFER_SIZE, typename _Stream>
   class ServoMapStreamDecorator :
-      public ::Stream::IOStream<ServoMapStreamDecorator<BUFFER_SIZE, Stream>>,
-      public ::Stream::RandomAccessStream {
+      public Stream::IOStream<ServoMapStreamDecorator<BUFFER_SIZE, _Stream>>,
+      public Stream::RandomAccessStream {
   private:
-    BusFrameStreamDecorator<BUFFER_SIZE, Stream> _bfs;
-    Stream& _stream;
+    BusFrameStreamDecorator<BUFFER_SIZE, _Stream> _bfs;
+    _Stream& _stream;
     u8 _id;
 
   private:
@@ -30,7 +30,7 @@ namespace Feetech {
     }
 
   public:
-    ServoMapStreamDecorator(Stream& stream)
+    ServoMapStreamDecorator(_Stream& stream)
       : _bfs(stream), _stream(stream), _id(0xfe) {
     }
 
