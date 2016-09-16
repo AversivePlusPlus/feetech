@@ -33,6 +33,22 @@ g++ myfile.cpp                 \
   -I/path/to/feetech/include
 ```
 
+### Arduino (from sources)
+
+Please note that this package use C++11, which is not enabled by default in most versions of the Arduino IDE. You may need to enable C++11 (google is your friend ;) ), or update the IDE.
+
+This library has dependencies, you need to add all dependencies to the Arduino IDE.
+
+Clone the git repository :
+```bash
+git clone https://github.com/AversivePlusPlus/feetech.git
+cd feetech
+make arduino_package
+```
+
+You will find the file `feetech.zip` in `build` directory. 
+You can add it to your Arduino IDE (sketch > include library > add .zip library)
+
 ## Use
 
 ### SC interface
