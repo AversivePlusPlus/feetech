@@ -5,6 +5,8 @@
 #include <stream/io_stream.hpp>
 #include <stream/random_access_stream.hpp>
 
+namespace Aversive {
+
 namespace Feetech {
 
   template<u8 BUFFER_SIZE, typename _Stream>
@@ -115,6 +117,8 @@ namespace Feetech {
       return BUFFER_SIZE-6;
     }
   };
+
+}
 
 }
 

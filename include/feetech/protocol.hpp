@@ -3,6 +3,8 @@
 
 #include <base/integer.hpp>
 
+namespace Aversive {
+
 namespace Feetech {
 
   namespace Protocol {
@@ -104,6 +106,8 @@ namespace Feetech {
     static constexpr u8 INST_RESET      = 0x06;
     static constexpr u8 INST_SYNC_WRITE = 0x83;
   }
+
+}
 
 }
 

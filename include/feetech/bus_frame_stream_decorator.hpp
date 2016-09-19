@@ -5,6 +5,8 @@
 #include <stream/output_stream.hpp>
 #include <container/buffer.hpp>
 
+namespace Aversive {
+
 namespace Feetech {
 
   template<u16 BUFFER_SIZE, typename _Stream>
@@ -56,6 +58,8 @@ namespace Feetech {
       return BUFFER_SIZE - _write_buffer.usedSpace();
     }
   };
+
+}
 
 }
 

@@ -3,6 +3,8 @@
 
 #include <feetech/servo_map_stream_decorator.hpp>
 
+namespace Aversive {
+
 namespace Feetech {
 
   template<typename Stream>
@@ -111,6 +113,8 @@ namespace Feetech {
     }
 
   };
+
+}
 
 }
 
