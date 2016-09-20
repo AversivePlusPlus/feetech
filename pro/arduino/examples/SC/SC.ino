@@ -1,7 +1,7 @@
-#include <base.h>
-#include <container.h>
-#include <stream.h>
-#include <feetech.h>
+#include <aversive_base.h>
+#include <aversive_container.h>
+#include <aversive_stream.h>
+#include <aversive_feetech.h>
 
 #include <feetech/sc.hpp> 
 

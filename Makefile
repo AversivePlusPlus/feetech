@@ -9,7 +9,7 @@ build/${PACKAGE_NAME}.zip: build/arduino/${PACKAGE_NAME}.h
 
 build/arduino/${PACKAGE_NAME}.h: build/arduino
 	cp -r include/* $<
-	cp pro/arduino/${PACKAGE_NAME}.h $<
+	cp pro/arduino/aversive_${PACKAGE_NAME}.h $<
 	cp -r pro/arduino/examples $<
 
 build/arduino: build
