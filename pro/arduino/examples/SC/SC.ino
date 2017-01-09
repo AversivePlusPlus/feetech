@@ -14,7 +14,7 @@ public:
     : _hs(serial) {
   }
 
-  inline u8 getChar(void) {
+  inline u8 get(void) {
     u8 ret = 0;
     _hs.readBytes(&ret, 1);
     return ret;
@@ -28,7 +28,7 @@ public:
     return _hs.available();
   }
 
-  inline void putChar(u8 c) {
+  inline void put(u8 c) {
     _hs.write(c);
   }
 
