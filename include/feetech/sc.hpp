@@ -35,19 +35,19 @@ namespace Feetech {
         }
       _stream.setServo(id);
       _stream.seek(Protocol::P_ID);
-      return _stream.getChar() == id;
+      return _stream.get() == id;
     }
 
     inline void enableTorque(u8 id) {
       _stream.setServo(id);
       _stream.seek(Protocol::P_TORQUE_ENABLE);
-      _stream.putChar(1);
+      _stream.put(1);
     }
 
     inline void disableTorque(u8 id) {
       _stream.setServo(id);
       _stream.seek(Protocol::P_TORQUE_ENABLE);
-      _stream.putChar(0);
+      _stream.put(0);
     }
 
     inline bool isTorqueEnabled(u8 id) {
@@ -83,13 +83,13 @@ namespace Feetech {
       _stream.setServo(id);
 
       _stream.seek(Protocol::P_LOCK);
-      _stream.putChar(0);
+      _stream.put(0);
 
       _stream.seek(Protocol::P_ID);
-      _stream.putChar(new_id);
+      _stream.put(new_id);
 
       _stream.seek(Protocol::P_LOCK);
-      _stream.putChar(1);
+      _stream.put(1);
     }
 
     inline s16 getLoad(u8 id) {

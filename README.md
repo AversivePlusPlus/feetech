@@ -102,7 +102,7 @@ public:
     uart_init(_uart_id, baudrate);
   }
 
-  inline void putChar(u8 c) {
+  inline void put(u8 c) {
     uart_write(_uart_id, &c, 1);
   }
 
@@ -115,7 +115,7 @@ public:
     return 1;
   }
 
-  inline u8 getChar(void) {
+  inline u8 get(void) {
     char c = 0;
     uart_read(_uart_id, &c, 1);
     return (u8)c;

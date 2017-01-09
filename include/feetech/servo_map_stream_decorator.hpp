@@ -2,7 +2,8 @@
 #define FEETECH_SERVO_MAP_STREAM_DECORATOR_HPP
 
 #include <feetech/bus_frame_stream_decorator.hpp>
-#include <stream/io_stream.hpp>
+#include <stream/input_stream.hpp>
+#include <stream/output_stream.hpp>
 #include <stream/random_access_stream.hpp>
 
 namespace Aversive {
@@ -11,16 +12,17 @@ namespace Feetech {
 
   template<u8 BUFFER_SIZE, typename _Stream>
   class ServoMapStreamDecorator :
-      public Stream::IOStream<ServoMapStreamDecorator<BUFFER_SIZE, _Stream>>,
-      public Stream::RandomAccessStream {
+      public Stream::InputStream<char, unsigned int>,
+      public Stream::OutputStream<char, unsigned int>,
+      public Stream::RandomAccessStream<unsigned int> {
   private:
     BusFrameStreamDecorator<BUFFER_SIZE, _Stream> _bfs;
     _Stream& _stream;
     u8 _id;
 
   private:
-    u16 readTimeout(u8* data, u16 length) {
-      u16 len = 0;
+    unsigned int readTimeout(char* data, unsigned int length) {
+      unsigned int len = 0;
       for(u32 i = 0 ; i < Protocol::TIMEOUT && len < length ; i++) {
           u16 rlen = _stream.readable();
           if(rlen) {
@@ -40,80 +42,80 @@ namespace Feetech {
       _id = id;
     }
 
-    inline void putChar(u8 c) {
+    inline void put(char c) {
       _bfs.start(_id);
-      _bfs.putChar(Protocol::INST_WRITE);
-      _bfs.putChar(_cursor);
-      _bfs.putChar(c);
+      _bfs.put(Protocol::INST_WRITE);
+      _bfs.put(_cursor);
+      _bfs.put(c);
       _bfs.end();
-      move(1);
+      seek(tell()+1);
 
-      u8 buff[6];
+      char buff[6];
       readTimeout(buff, 6);
     }
 
-    inline u16 write(u8* data, u16 length) {
+    inline unsigned int write(char* data, unsigned int length) {
       _bfs.start(_id);
-      _bfs.putChar(Protocol::INST_WRITE);
-      _bfs.putChar(_cursor);
-      for(u16 i = 0 ; i < length ; i++) {
-          _bfs.putChar(data[i]);
+      _bfs.put(Protocol::INST_WRITE);
+      _bfs.put(_cursor);
+      for(unsigned int i = 0 ; i < length ; i++) {
+          _bfs.put(data[i]);
         }
       _bfs.end();
 
-      u8 buff[6];
+      char buff[6];
       if(readTimeout(buff, 6) != 6) {
           return 0;
         }
 
-      move(length);
+      seek(tell()+length);
       return length;
     }
 
-    inline u16 writable(void) {
+    inline unsigned int writable(void) {
       return BUFFER_SIZE-7;
     }
 
-    inline u8 getChar(void) {
+    inline char get(void) {
       _bfs.start(_id);
-      _bfs.putChar(Protocol::INST_READ);
-      _bfs.putChar(_cursor);
-      _bfs.putChar(1);
+      _bfs.put(Protocol::INST_READ);
+      _bfs.put(_cursor);
+      _bfs.put(1);
       _bfs.end();
 
-      u8 buff[7];
+      char buff[7];
 
       if(readTimeout(buff, 7) != 7) {
           return 0;
         }
 
-      move(1);
+      seek(tell()+1);
       return buff[5];
     }
 
-    inline u16 read(u8* data, u16 length) {
+    inline unsigned int read(char* data, unsigned int length) {
       _bfs.start(_id);
-      _bfs.putChar(Protocol::INST_READ);
-      _bfs.putChar(_cursor);
-      _bfs.putChar(length);
+      _bfs.put(Protocol::INST_READ);
+      _bfs.put(_cursor);
+      _bfs.put(length);
       _bfs.end();
 
-      u8 buff[BUFFER_SIZE];
-      u16 msg_len = length + 6;
+      char buff[BUFFER_SIZE];
+      unsigned int msg_len = length + 6;
 
       if(readTimeout(buff, msg_len) != msg_len) {
           return 0;
         }
 
-      for(u16 i = 0 ; i < length ; i++) {
+      for(unsigned int i = 0 ; i < length ; i++) {
           data[i] = buff[i+5];
         }
 
-      move(length);
+      seek(tell()+length);
       return length;
     }
 
-    inline u16 readable(void) {
+    inline unsigned int readable(void) {
       return BUFFER_SIZE-6;
     }
   };
