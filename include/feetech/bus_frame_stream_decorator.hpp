@@ -3,7 +3,7 @@
 
 #include <feetech/protocol.hpp>
 #include <stream/output_stream.hpp>
-#include <container/buffer.hpp>
+#include <container/simple/buffer.hpp>
 
 namespace Aversive {
 
@@ -13,7 +13,7 @@ namespace Feetech {
   class BusFrameStreamDecorator : Stream::OutputStream<char, unsigned int> {
   private:
     _Stream& _stream;
-    Container::Buffer<BUFFER_SIZE, char> _write_buffer;
+    Container::Simple::Buffer<char, BUFFER_SIZE> _write_buffer;
     u8 _id;
 
   public:
@@ -30,10 +30,10 @@ namespace Feetech {
       _stream.put(Protocol::START);
       _stream.put(_id);
       u8 sum = _id;
-      u8 s = _write_buffer.usedSpace()+1;
+      u8 s = _write_buffer.size()+1;
       _stream.put(s);
       sum += s;
-      while(!_write_buffer.isEmpty()) {
+      while(!_write_buffer.empty()) {
           _stream.put(_write_buffer.head());
           sum += _write_buffer.head();
           _write_buffer.dequeue();
@@ -55,7 +55,7 @@ namespace Feetech {
     }
 
     inline unsigned int writable(void) {
-      return BUFFER_SIZE - _write_buffer.usedSpace();
+      return BUFFER_SIZE - _write_buffer.size();
     }
   };
 
