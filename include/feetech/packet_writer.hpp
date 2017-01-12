@@ -31,6 +31,49 @@ public:
   }
 
 public:
+  void response(u8 id, const u8* buffer, unsigned int size) {
+    const u8 len = 2+size;
+    if(4+len < _limit) {
+      _size = 4+len;
+
+      u8 sum = 0;
+
+      _buffer[0] = Protocol::START;
+      _buffer[1] = Protocol::START;
+      sum += _buffer[2] = id;
+      sum += _buffer[3] = len;
+      sum += _buffer[4] = 0;
+
+      for(unsigned int i = 0 ; i < size ; i++) {
+        sum += _buffer[5+i] = buffer[i];
+      }
+
+      _buffer[_size-1] = ~sum;
+    }
+    else {
+      _size = 0;
+    }
+  }
+
+  void ack(u8 id) {
+    const u8 len = 2;
+    if(4+len < _limit) {
+      _size = 4+len;
+
+      u8 sum = 0;
+
+      _buffer[0] = Protocol::START;
+      _buffer[1] = Protocol::START;
+      sum += _buffer[2] = id;
+      sum += _buffer[3] = len;
+      sum += _buffer[4] = 0;
+      _buffer[_size-1] = ~sum;
+    }
+    else {
+      _size = 0;
+    }
+  }
+
   void ping(u8 id) {
     const u8 len = 2;
     if(4+len < _limit) {
