@@ -7,6 +7,20 @@ namespace Aversive {
 namespace Feetech {
 using namespace ::Aversive::Base;
 
+template<typename T>
+class RegisterAddress {
+private:
+  u8 _addr;
+public:
+  constexpr RegisterAddress(unsigned int addr) :
+    _addr(addr) {
+  }
+
+  constexpr operator u8(void) const {
+    return _addr;
+  }
+};
+
 namespace Protocol {
 
 static constexpr u8 START = 0xFF;
@@ -22,80 +36,80 @@ static constexpr u8 B_57600  = 6;
 static constexpr u8 B_38400  = 7;
 
 //8bits register Address
-static constexpr u8 P_MODEL_NUMBER_L         = 0;
-static constexpr u8 P_MODEL_NUMBER_H         = 1;
-static constexpr u8 P_VERSION_L              = 3;
-static constexpr u8 P_VERSION_H              = 4;
-static constexpr u8 P_ID                     = 5;
-static constexpr u8 P_BAUD_RATE              = 6;
-static constexpr u8 P_RETURN_DELAY_TIME      = 7;
-static constexpr u8 P_RETURN_LEVEL           = 8;
-static constexpr u8 P_MIN_ANGLE_LIMIT_L      = 9;
-static constexpr u8 P_MIN_ANGLE_LIMIT_H      = 10;
-static constexpr u8 P_MAX_ANGLE_LIMIT_L      = 11;
-static constexpr u8 P_MAX_ANGLE_LIMIT_H      = 12;
-static constexpr u8 P_LIMIT_TEMPERATURE      = 13;
-static constexpr u8 P_MAX_LIMIT_VOLTAGE      = 14;
-static constexpr u8 P_MIN_LIMIT_VOLTAGE      = 15;
-static constexpr u8 P_MAX_TORQUE_L           = 16;
-static constexpr u8 P_MAX_TORQUE_H           = 17;
-static constexpr u8 P_ALARM_LED              = 18;
-static constexpr u8 P_ALARM_SHUTDOWN         = 19;
-static constexpr u8 P_COMPLIANCE_P           = 21;
-static constexpr u8 P_COMPLIANCE_D           = 22;
-static constexpr u8 P_COMPLIANCE_I           = 23;
-static constexpr u8 P_PUNCH_L                = 24;
-static constexpr u8 P_PUNCH_H                = 25;
-static constexpr u8 P_CW_DEAD                = 26;
-static constexpr u8 P_CCW_DEAD               = 27;
-static constexpr u8 P_IMAX_L                 = 28;
-static constexpr u8 P_IMAX_H                 = 29;
-static constexpr u8 P_OFFSET_L               = 30;
-static constexpr u8 P_OFFSET_H               = 31;
+static constexpr RegisterAddress<u8> P_MODEL_NUMBER_L         = 0;
+static constexpr RegisterAddress<u8> P_MODEL_NUMBER_H         = 1;
+static constexpr RegisterAddress<u8> P_VERSION_L              = 3;
+static constexpr RegisterAddress<u8> P_VERSION_H              = 4;
+static constexpr RegisterAddress<u8> P_ID                     = 5;
+static constexpr RegisterAddress<u8> P_BAUD_RATE              = 6;
+static constexpr RegisterAddress<u8> P_RETURN_DELAY_TIME      = 7;
+static constexpr RegisterAddress<u8> P_RETURN_LEVEL           = 8;
+static constexpr RegisterAddress<u8> P_MIN_ANGLE_LIMIT_L      = 9;
+static constexpr RegisterAddress<u8> P_MIN_ANGLE_LIMIT_H      = 10;
+static constexpr RegisterAddress<u8> P_MAX_ANGLE_LIMIT_L      = 11;
+static constexpr RegisterAddress<u8> P_MAX_ANGLE_LIMIT_H      = 12;
+static constexpr RegisterAddress<u8> P_LIMIT_TEMPERATURE      = 13;
+static constexpr RegisterAddress<u8> P_MAX_LIMIT_VOLTAGE      = 14;
+static constexpr RegisterAddress<u8> P_MIN_LIMIT_VOLTAGE      = 15;
+static constexpr RegisterAddress<u8> P_MAX_TORQUE_L           = 16;
+static constexpr RegisterAddress<u8> P_MAX_TORQUE_H           = 17;
+static constexpr RegisterAddress<u8> P_ALARM_LED              = 18;
+static constexpr RegisterAddress<u8> P_ALARM_SHUTDOWN         = 19;
+static constexpr RegisterAddress<u8> P_COMPLIANCE_P           = 21;
+static constexpr RegisterAddress<u8> P_COMPLIANCE_D           = 22;
+static constexpr RegisterAddress<u8> P_COMPLIANCE_I           = 23;
+static constexpr RegisterAddress<u8> P_PUNCH_L                = 24;
+static constexpr RegisterAddress<u8> P_PUNCH_H                = 25;
+static constexpr RegisterAddress<u8> P_CW_DEAD                = 26;
+static constexpr RegisterAddress<u8> P_CCW_DEAD               = 27;
+static constexpr RegisterAddress<u8> P_IMAX_L                 = 28;
+static constexpr RegisterAddress<u8> P_IMAX_H                 = 29;
+static constexpr RegisterAddress<u8> P_OFFSET_L               = 30;
+static constexpr RegisterAddress<u8> P_OFFSET_H               = 31;
 
-static constexpr u8 P_TORQUE_ENABLE          = 40;
-static constexpr u8 P_LED                    = 41;
-static constexpr u8 P_GOAL_POSITION_L        = 42;
-static constexpr u8 P_GOAL_POSITION_H        = 43;
-static constexpr u8 P_GOAL_TIME_L            = 44;
-static constexpr u8 P_GOAL_TIME_H            = 45;
-static constexpr u8 P_GOAL_SPEED_L           = 46;
-static constexpr u8 P_GOAL_SPEED_H           = 47;
-static constexpr u8 P_LOCK                   = 48;
+static constexpr RegisterAddress<u8> P_TORQUE_ENABLE          = 40;
+static constexpr RegisterAddress<u8> P_LED                    = 41;
+static constexpr RegisterAddress<u8> P_GOAL_POSITION_L        = 42;
+static constexpr RegisterAddress<u8> P_GOAL_POSITION_H        = 43;
+static constexpr RegisterAddress<u8> P_GOAL_TIME_L            = 44;
+static constexpr RegisterAddress<u8> P_GOAL_TIME_H            = 45;
+static constexpr RegisterAddress<u8> P_GOAL_SPEED_L           = 46;
+static constexpr RegisterAddress<u8> P_GOAL_SPEED_H           = 47;
+static constexpr RegisterAddress<u8> P_LOCK                   = 48;
 
-static constexpr u8 P_PRESENT_POSITION_L     = 56;
-static constexpr u8 P_PRESENT_POSITION_H     = 57;
-static constexpr u8 P_PRESENT_SPEED_L        = 58;
-static constexpr u8 P_PRESENT_SPEED_H        = 59;
-static constexpr u8 P_PRESENT_LOAD_L         = 60;
-static constexpr u8 P_PRESENT_LOAD_H         = 61;
-static constexpr u8 P_PRESENT_VOLTAGE        = 62;
-static constexpr u8 P_PRESENT_TEMPERATURE    = 63;
-static constexpr u8 P_REGISTERED_INSTRUCTION = 64;
-static constexpr u8 P_ERROR                  = 65;
-static constexpr u8 P_MOVING                 = 66;
-static constexpr u8 P_VIR_POSITION_L         = 67;
-static constexpr u8 P_VIR_POSITION_H         = 68;
-static constexpr u8 P_CURRENT_L              = 69;
-static constexpr u8 P_CURRENT_H              = 70;
+static constexpr RegisterAddress<u8> P_PRESENT_POSITION_L     = 56;
+static constexpr RegisterAddress<u8> P_PRESENT_POSITION_H     = 57;
+static constexpr RegisterAddress<u8> P_PRESENT_SPEED_L        = 58;
+static constexpr RegisterAddress<u8> P_PRESENT_SPEED_H        = 59;
+static constexpr RegisterAddress<u8> P_PRESENT_LOAD_L         = 60;
+static constexpr RegisterAddress<u8> P_PRESENT_LOAD_H         = 61;
+static constexpr RegisterAddress<u8> P_PRESENT_VOLTAGE        = 62;
+static constexpr RegisterAddress<u8> P_PRESENT_TEMPERATURE    = 63;
+static constexpr RegisterAddress<u8> P_REGISTERED_INSTRUCTION = 64;
+static constexpr RegisterAddress<u8> P_ERROR                  = 65;
+static constexpr RegisterAddress<u8> P_MOVING                 = 66;
+static constexpr RegisterAddress<u8> P_VIR_POSITION_L         = 67;
+static constexpr RegisterAddress<u8> P_VIR_POSITION_H         = 68;
+static constexpr RegisterAddress<u8> P_CURRENT_L              = 69;
+static constexpr RegisterAddress<u8> P_CURRENT_H              = 70;
 
 //16bits register address
-static constexpr u8 P_MODEL_NUMBER         = 0;
-static constexpr u8 P_VERSION              = 3;
-static constexpr u8 P_MIN_ANGLE_LIMIT      = 9;
-static constexpr u8 P_MAX_ANGLE_LIMIT      = 11;
-static constexpr u8 P_MAX_TORQUE           = 16;
-static constexpr u8 P_PUNCH                = 24;
-static constexpr u8 P_IMAX                 = 28;
-static constexpr u8 P_OFFSET               = 30;
-static constexpr u8 P_GOAL_POSITION        = 42;
-static constexpr u8 P_GOAL_TIME            = 44;
-static constexpr u8 P_GOAL_SPEED           = 46;
-static constexpr u8 P_PRESENT_POSITION     = 56;
-static constexpr u8 P_PRESENT_SPEED        = 58;
-static constexpr u8 P_PRESENT_LOAD         = 60;
-static constexpr u8 P_VIR_POSITION         = 67;
-static constexpr u8 P_CURRENT              = 69;
+static constexpr RegisterAddress<u16> P_MODEL_NUMBER         = 0;
+static constexpr RegisterAddress<u16> P_VERSION              = 3;
+static constexpr RegisterAddress<u16> P_MIN_ANGLE_LIMIT      = 9;
+static constexpr RegisterAddress<u16> P_MAX_ANGLE_LIMIT      = 11;
+static constexpr RegisterAddress<u16> P_MAX_TORQUE           = 16;
+static constexpr RegisterAddress<u16> P_PUNCH                = 24;
+static constexpr RegisterAddress<u16> P_IMAX                 = 28;
+static constexpr RegisterAddress<u16> P_OFFSET               = 30;
+static constexpr RegisterAddress<u16> P_GOAL_POSITION        = 42;
+static constexpr RegisterAddress<u16> P_GOAL_TIME            = 44;
+static constexpr RegisterAddress<u16> P_GOAL_SPEED           = 46;
+static constexpr RegisterAddress<u16> P_PRESENT_POSITION     = 56;
+static constexpr RegisterAddress<u16> P_PRESENT_SPEED        = 58;
+static constexpr RegisterAddress<u16> P_PRESENT_LOAD         = 60;
+static constexpr RegisterAddress<u16> P_VIR_POSITION         = 67;
+static constexpr RegisterAddress<u16> P_CURRENT              = 69;
 
 
 //Instruction:
