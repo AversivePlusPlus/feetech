@@ -2,17 +2,17 @@
 #include <iostream>
 #include <string.h>
 
+#include <stream/buffer_stream.hpp>
+#include <feetech/sc.hpp>
+
 #include <feetech/packet_writer.hpp>
 #include <feetech/packet_reader.hpp>
-#include <feetech/sc.hpp>
-#include <stream/buffer_stream.hpp>
+
+#include <feetech/servo_stream.hpp>
 
 using namespace Aversive::Base;
 using namespace Aversive::Stream;
 using namespace Aversive::Feetech;
-
-BufferStream<128> sc_uart;
-SC<decltype(sc_uart)> sc(sc_uart);
 
 class MoreInfosPacketReader : public PacketReader {
 public:
@@ -42,9 +42,108 @@ public:
 
 };
 
+class DummyFeetechStream :
+    public InputStream<char, unsigned int>,
+    public OutputStream<char, unsigned int> {
+private:
+  constexpr static unsigned int SIZE = 128;
+  char _buffer[SIZE];
+  unsigned int _write;
+  unsigned int _readable;
+  unsigned int _read;
+
+  void update(void) {
+    PacketReader pr(_buffer, _write);
+    _read = _readable = 0;
+    if(!pr.valid()) return;
+
+    if(pr.instr() == Protocol::INST_WRITE) {
+      WritePacketReader pr(_buffer, _write);
+      if(pr.valid()) {
+        const u8 id = pr.id();
+        PacketWriter pw(_buffer, SIZE);
+        pw.ack(id);
+        _readable = pw.size();
+      }
+    }
+    else if(pr.instr() == Protocol::INST_READ) {
+      ReadPacketReader pr(_buffer, _write);
+      if(pr.valid() && pr.size() < SIZE) {
+        const u8 id = pr.id();
+        const unsigned int s = pr.size();
+        PacketWriter pw(_buffer, SIZE);
+        char tmp[SIZE];
+        for(unsigned int i = 0 ; i < s ; i++) {
+          tmp[i] = 42;
+        }
+        pw.response(id, (const u8*)tmp, s);
+        _readable = pw.size();
+      }
+    }
+
+    _write = 0;
+  }
+
+public:
+  DummyFeetechStream(void)
+    : _buffer{0}, _write(0), _read(0) {
+  }
+
+  void put(char c) {
+    if(_write+1 <= SIZE) {
+      _buffer[_write] = c;
+      _write += 1;
+      update();
+    }
+  }
+
+  unsigned int write(const char* data, unsigned int size) {
+    if(_write+size <= SIZE) {
+      for(unsigned int i = 0 ; i < size ; i++) {
+        _buffer[_write+i] = data[i];
+      }
+      _write += size;
+      update();
+      return size;
+    }
+    return 0;
+  }
+
+  unsigned int writable(void) {
+    return SIZE-_write;
+  }
+
+  char get(void) {
+    if(_read+1 <= _readable) return _buffer[_read++];
+    return 0;
+  }
+
+  unsigned int read(char* data, unsigned int size) {
+    if(_read+size <= _readable) {
+      for(unsigned int i = 0 ; i < size ; i++) {
+        data[i] = _buffer[_read+i];
+      }
+      _read += size;
+      return size;
+    }
+    return 0;
+  }
+
+  unsigned int readable(void) {
+    return _readable-_read;
+  }
+};
+
+
 int main(void) {
+  ////////////////////////////////////////////////////////////////
+  // SC
+  DummyFeetechStream sc_uart;
+  SC<decltype(sc_uart)> sc(sc_uart);
   myAssert(sc.ping(0) == false, "Line " S__LINE__ ": SC::ping");
 
+  ////////////////////////////////////////////////////////////////
+  // PacketWriter/PacketReader
   char buf[32];
   PacketWriter pw(buf, 32);
   myAssert(pw.data() == buf, "Line " S__LINE__ "PacketWriter::data");
@@ -332,6 +431,36 @@ int main(void) {
     myAssert(pr[1].size() == sizeof("hello"), "Line " S__LINE__ "SyncWritePacketReader::[]::size");
     myAssert(std::strcmp((const char*)pr[1].data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
   }
+
+  ////////////////////////////////////////////////////////////////
+  // ServoStream
+  DummyFeetechStream dfs;
+  ServoStream<decltype(dfs)> ss(dfs, 1);
+  ss.seek(Protocol::P_ID);
+  myAssert(ss.tell() == Protocol::P_ID, "Line " S__LINE__ "ServoStream::tell");
+  ss.put(2);
+  myAssert(ss.tell() == Protocol::P_ID+1, "Line " S__LINE__ "ServoStream::tell");
+  ss.write("hello", sizeof("hello"));
+  myAssert(ss.tell() == Protocol::P_ID+1+sizeof("hello"), "Line " S__LINE__ "ServoStream::tell");
+  ss.seek(0);
+  myAssert(ss.writable() == 255, "Line " S__LINE__ "ServoStream::writable");
+  myAssert(ss.readable() == 255, "Line " S__LINE__ "ServoStream::readable");
+  ss.seek(255);
+  myAssert(ss.writable() == 0, "Line " S__LINE__ "ServoStream::writable");
+  myAssert(ss.readable() == 0, "Line " S__LINE__ "ServoStream::readable");
+  ss.seek(Protocol::P_ID);
+  myAssert(ss.get() == 42, "Line " S__LINE__ "ServoStream::get");
+  myAssert(ss.tell() == Protocol::P_ID+1, "Line " S__LINE__ "ServoStream::tell");
+  {
+    constexpr unsigned int size = 6;
+    char buffer[size] = {0};
+    myAssert(ss.read(buffer, size) == size, "Line " S__LINE__ "ServoStream::read");
+    for(unsigned int i = 0 ; i < size ; i++) {
+      myAssert(buffer[i] == 42, "Line " S__LINE__ "ServoStream::read");
+    }
+    myAssert(ss.tell() == Protocol::P_ID+1+size, "Line " S__LINE__ "ServoStream::tell");
+  }
+
 
   std::cout << "OK" << std::endl;
   return 0;

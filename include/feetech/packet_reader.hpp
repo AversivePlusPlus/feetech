@@ -147,25 +147,29 @@ private:
       : _pr(pr), _index(index) {
     }
 
-    bool valid(void) {
+    bool valid(void) const {
       return _index < _pr.size();
     }
 
-    unsigned int size(void) {
+    u8 reg(void) const {
+      return _pr._buffer[5];
+    }
+
+    unsigned int size(void) const {
       return _pr._buffer[6];
     }
 
-    u8 id(void) {
+    u8 id(void) const {
       return _pr._buffer[7+_index*(size()+1)];
     }
 
-    const u8* data(void) {
+    const u8* data(void) const {
       return &_pr._buffer[7+_index*(size()+1)+1];
     }
   };
 
 public:
-  SyncWriteItemRef operator[](unsigned int index) {
+  const SyncWriteItemRef operator[](unsigned int index) const {
     return SyncWriteItemRef(*this, index);
   }
 };
