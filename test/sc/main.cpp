@@ -10,6 +10,8 @@
 
 #include <feetech/servo_stream.hpp>
 
+#include <feetech/servo.hpp>
+
 using namespace Aversive::Base;
 using namespace Aversive::Stream;
 using namespace Aversive::Feetech;
@@ -59,6 +61,15 @@ private:
 
     if(pr.instr() == Protocol::INST_WRITE) {
       WritePacketReader pr(_buffer, _write);
+      if(pr.valid()) {
+        const u8 id = pr.id();
+        PacketWriter pw(_buffer, SIZE);
+        pw.ack(id);
+        _readable = pw.size();
+      }
+    }
+    else if(pr.instr() == Protocol::INST_PING) {
+      PacketReader pr(_buffer, _write);
       if(pr.valid()) {
         const u8 id = pr.id();
         PacketWriter pw(_buffer, SIZE);
@@ -439,8 +450,10 @@ int main(void) {
   ss.seek(Protocol::P_ID);
   myAssert(ss.tell() == Protocol::P_ID, "Line " S__LINE__ "ServoStream::tell");
   ss.put(2);
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
   myAssert(ss.tell() == Protocol::P_ID+1, "Line " S__LINE__ "ServoStream::tell");
   ss.write("hello", sizeof("hello"));
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
   myAssert(ss.tell() == Protocol::P_ID+1+sizeof("hello"), "Line " S__LINE__ "ServoStream::tell");
   ss.seek(0);
   myAssert(ss.writable() == 255, "Line " S__LINE__ "ServoStream::writable");
@@ -450,17 +463,40 @@ int main(void) {
   myAssert(ss.readable() == 0, "Line " S__LINE__ "ServoStream::readable");
   ss.seek(Protocol::P_ID);
   myAssert(ss.get() == 42, "Line " S__LINE__ "ServoStream::get");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
   myAssert(ss.tell() == Protocol::P_ID+1, "Line " S__LINE__ "ServoStream::tell");
   {
     constexpr unsigned int size = 6;
     char buffer[size] = {0};
     myAssert(ss.read(buffer, size) == size, "Line " S__LINE__ "ServoStream::read");
+    myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
     for(unsigned int i = 0 ; i < size ; i++) {
       myAssert(buffer[i] == 42, "Line " S__LINE__ "ServoStream::read");
     }
     myAssert(ss.tell() == Protocol::P_ID+1+size, "Line " S__LINE__ "ServoStream::tell");
   }
 
+  ////////////////////////////////////////////////////////////////
+  // ServoStream
+  Servo<decltype(dfs)> servo(dfs, 1);
+  myAssert(servo.ping(), "Line " S__LINE__ ": Servo::ping");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  servo.enableTorque();
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  servo.disableTorque();
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  myAssert(!servo.isTorqueEnabled(), "Line " S__LINE__ ": Servo::isTorqueEnabled");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  servo.setPosition(512);
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  myAssert(servo.getPosition() == 42+42*256, "Line " S__LINE__ ": Servo::getPosition");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  servo.setId(2);
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  myAssert(servo.getLoad() == 42+42*256, "Line " S__LINE__ ": Servo::getLoad");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  myAssert(servo.getSpeed() == 42+42*256, "Line " S__LINE__ ": Servo::getSpeed");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
 
   std::cout << "OK" << std::endl;
   return 0;
