@@ -62,7 +62,28 @@ public:
   }
 };
 
+class AckPacketReader : public PacketReader {
+public:
+  static inline constexpr unsigned int expected(void) {
+    return 6;
+  }
+
+public:
+  AckPacketReader(const char* buffer, unsigned int size)
+    : PacketReader(buffer, size) {
+  }
+
+  bool valid(void) const {
+    return PacketReader::valid() && instr() == 0;
+  }
+};
+
 class ResponsePacketReader : public PacketReader {
+public:
+  static inline constexpr unsigned int expected(unsigned int size) {
+    return 6+size;
+  }
+
 public:
   ResponsePacketReader(const char* buffer, unsigned int size)
     : PacketReader(buffer, size) {

@@ -23,19 +23,6 @@ private:
   Stream& _stream;
   u8 _id;
 
-private:
-  unsigned int readTimeout(char* data, unsigned int length) {
-    unsigned int len = 0;
-    for(u32 i = 0 ; i < Protocol::TIMEOUT && len < length ; i++) {
-      u16 rlen = _stream.readable();
-      if(rlen) {
-        _stream.read(data+len, rlen);
-        len += rlen;
-      }
-    }
-    return len;
-  }
-
 public:
   ServoStream(Stream& stream, u8 id)
     : _stream(stream), _id(id) {
@@ -49,7 +36,7 @@ public:
     _stream.write(pw.data(), pw.size());
     seek(this->tell()+1);
 
-    readTimeout(buffer, 6);
+    _stream.read(buffer, AckPacketReader::expected());
   }
 
   inline unsigned int write(const char* data, unsigned int length) {
@@ -65,8 +52,11 @@ public:
     seek(this->tell()+length);
 
     char buff[6];
-    readTimeout(buff, 6);
-    return length;
+    constexpr unsigned int esize = AckPacketReader::expected();
+    if(_stream.read(buff, esize) == esize) {
+      return length;
+    }
+    return 0;
   }
 
   inline unsigned int writable(void) {
@@ -81,12 +71,14 @@ public:
     _stream.write(pw.data(), pw.size());
     seek(this->tell()+1);
 
-    readTimeout(buffer, 7);
-    ResponsePacketReader pr(buffer, 7);
-    if(!pr.valid()) {
-      return 0;
+    constexpr unsigned int esize = ResponsePacketReader::expected(1);
+    if(_stream.read(buffer, esize) == esize) {
+      ResponsePacketReader pr(buffer, esize);
+      if(pr.valid()) {
+        return pr.data()[0];
+      }
     }
-    return pr.data()[0];
+    return 0;
   }
 
   inline unsigned int read(char* data, unsigned int length) {
@@ -100,8 +92,11 @@ public:
     pw.read(_id, (u8)this->tell(), length);
     _stream.write(pw.data(), pw.size());
 
-    readTimeout(buffer, 6+length);
-    ResponsePacketReader pr(buffer, 6+length);
+    const unsigned int esize = ResponsePacketReader::expected(length);
+    if(_stream.read(buffer, esize) != esize) {
+      return 0;
+    }
+    ResponsePacketReader pr(buffer, esize);
     if(!pr.valid()) {
       return 0;
     }

@@ -148,12 +148,6 @@ public:
 
 int main(void) {
   ////////////////////////////////////////////////////////////////
-  // SC
-  DummyFeetechStream sc_uart;
-  SC<decltype(sc_uart)> sc(sc_uart);
-  myAssert(sc.ping(0) == false, "Line " S__LINE__ ": SC::ping");
-
-  ////////////////////////////////////////////////////////////////
   // PacketWriter/PacketReader
   char buf[32];
   PacketWriter pw(buf, 32);
@@ -496,6 +490,29 @@ int main(void) {
   myAssert(servo.getLoad() == 42+42*256, "Line " S__LINE__ ": Servo::getLoad");
   myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
   myAssert(servo.getSpeed() == 42+42*256, "Line " S__LINE__ ": Servo::getSpeed");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+
+  ////////////////////////////////////////////////////////////////
+  // SC
+  constexpr unsigned int id = 1;
+  SC<decltype(dfs)> sc(dfs);
+  myAssert(sc.ping(id), "Line " S__LINE__ ": SC::ping");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  sc.enableTorque(id);
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  sc.disableTorque(id);
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  myAssert(!sc.isTorqueEnabled(id), "Line " S__LINE__ ": SC::isTorqueEnabled");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  sc.setPosition(id, 512);
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  myAssert(sc.getPosition(id) == 42+42*256, "Line " S__LINE__ ": SC::getPosition");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  sc.setId(id, 2);
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  myAssert(sc.getLoad(id) == 42+42*256, "Line " S__LINE__ ": SC::getLoad");
+  myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
+  myAssert(sc.getSpeed(id) == 42+42*256, "Line " S__LINE__ ": SC::getSpeed");
   myAssert(dfs.readable() == 0, "Line " S__LINE__ ": DummyFeetechStream::readable");
 
   std::cout << "OK" << std::endl;
