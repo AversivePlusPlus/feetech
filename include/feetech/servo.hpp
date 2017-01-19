@@ -45,8 +45,9 @@ public:
     pw.ping(_id);
     _stream.write(pw.data(), pw.size());
 
-    if(_stream.read(buffer, 6) == 6) {
-      PacketReader pr(buffer, 6);
+    constexpr unsigned int esize = AckPacketReader::expected();
+    if(_stream.read(buffer, esize) == esize) {
+      AckPacketReader pr(buffer, esize);
       return pr.valid() && pr.id() == _id;
     }
     return false;
@@ -59,7 +60,7 @@ public:
     pw.write(_id, Protocol::P_TORQUE_ENABLE, 1);
     _stream.write(pw.data(), pw.size());
 
-    _stream.read(buffer, 6);
+    _stream.read(buffer, AckPacketReader::expected());
   }
 
   inline void disableTorque(void) {
@@ -69,7 +70,7 @@ public:
     pw.write(_id, Protocol::P_TORQUE_ENABLE, 0);
     _stream.write(pw.data(), pw.size());
 
-    _stream.read(buffer, 6);
+    _stream.read(buffer, AckPacketReader::expected());
   }
 
   inline bool isTorqueEnabled(void) {
@@ -79,8 +80,9 @@ public:
     pw.read(_id, Protocol::P_TORQUE_ENABLE, 1);
     _stream.write(pw.data(), pw.size());
 
-    if(_stream.read(buffer, 7) == 7) {
-      ResponsePacketReader pr(buffer, 7);
+    constexpr unsigned int esize = ResponsePacketReader::expected(1);
+    if(_stream.read(buffer, esize) == esize) {
+      ResponsePacketReader pr(buffer, esize);
       return pr.valid() && pr.id() == _id && pr.data()[0] == 1;
     }
     return false;
@@ -93,7 +95,7 @@ public:
     pw.write(_id, Protocol::P_GOAL_POSITION, pos);
     _stream.write(pw.data(), pw.size());
 
-    _stream.read(buffer, 6);
+    _stream.read(buffer, AckPacketReader::expected());
   }
 
   inline u16 getPosition(void) {
@@ -103,8 +105,9 @@ public:
     pw.read(_id, Protocol::P_PRESENT_POSITION, 2);
     _stream.write(pw.data(), pw.size());
 
-    if(_stream.read(buffer, 8) == 8) {
-      ResponsePacketReader pr(buffer, 8);
+    constexpr unsigned int esize = ResponsePacketReader::expected(2);
+    if(_stream.read(buffer, esize) == esize) {
+      ResponsePacketReader pr(buffer, esize);
       if(pr.valid() && pr.id() == _id && pr.size() == 2) {
         return network2host(*(u16*)pr.data());
       }
@@ -119,7 +122,7 @@ public:
     pw.write(_id, Protocol::P_ID, id);
     _stream.write(pw.data(), pw.size());
 
-    _stream.read(buffer, 6);
+    _stream.read(buffer, AckPacketReader::expected());
     _id = id;
   }
 
@@ -130,8 +133,9 @@ public:
     pw.read(_id, Protocol::P_PRESENT_LOAD, 2);
     _stream.write(pw.data(), pw.size());
 
-    if(_stream.read(buffer, 8) == 8) {
-      ResponsePacketReader pr(buffer, 8);
+    constexpr unsigned int esize = ResponsePacketReader::expected(2);
+    if(_stream.read(buffer, esize) == esize) {
+      ResponsePacketReader pr(buffer, esize);
       if(pr.valid() && pr.id() == _id && pr.size() == 2) {
         return network2host(*(u16*)pr.data());
       }
@@ -146,8 +150,9 @@ public:
     pw.read(_id, Protocol::P_PRESENT_SPEED, 2);
     _stream.write(pw.data(), pw.size());
 
-    if(_stream.read(buffer, 8) == 8) {
-      ResponsePacketReader pr(buffer, 8);
+    constexpr unsigned int esize = ResponsePacketReader::expected(2);
+    if(_stream.read(buffer, esize) == esize) {
+      ResponsePacketReader pr(buffer, esize);
       if(pr.valid() && pr.id() == _id && pr.size() == 2) {
         return network2host(*(u16*)pr.data());
       }
