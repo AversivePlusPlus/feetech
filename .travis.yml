@@ -25,6 +25,9 @@ before_install:
 # Container
  - git clone https://github.com/AversivePlusPlus/container
  - (cd container && make export)
+# Device
+ - git clone https://github.com/AversivePlusPlus/device
+ - (cd device && make export)
 # Stream
  - git clone https://github.com/AversivePlusPlus/stream
  - (cd stream && make export)
