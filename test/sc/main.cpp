@@ -170,7 +170,7 @@ int main(void) {
   {
     ResponsePacketReader pr(pw.data(), pw.size());
     myAssert(pr.size() == sizeof("hello"), "Line " S__LINE__ "ResponsePacketReader::size");
-    myAssert(std::strcmp((const char*)pr.data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
+    myAssert(strcmp((const char*)pr.data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
   }
 
   pw.ack(1);
@@ -258,7 +258,7 @@ int main(void) {
   {
     WritePacketReader pr(pw.data(), pw.size());
     myAssert(pr.size() == sizeof("hello"), "Line " S__LINE__ "ResponsePacketReader::size");
-    myAssert(std::strcmp((const char*)pr.data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
+    myAssert(strcmp((const char*)pr.data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
     myAssert(pr.reg() == Protocol::P_ID, "Line " S__LINE__ "ResponsePacketReader::reg");
   }
 
@@ -405,10 +405,10 @@ int main(void) {
     myAssert(pr.size() == 2, "Line " S__LINE__ "SyncWritePacketReader::size");
     myAssert(pr[0].id() == 1, "Line " S__LINE__ "SyncWritePacketReader::[]::id");
     myAssert(pr[0].size() == sizeof("hello"), "Line " S__LINE__ "SyncWritePacketReader::[]::size");
-    myAssert(std::strcmp((const char*)pr[0].data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
+    myAssert(strcmp((const char*)pr[0].data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
     myAssert(pr[1].id() == 2, "Line " S__LINE__ "SyncWritePacketReader::[]::id");
     myAssert(pr[1].size() == sizeof("hello"), "Line " S__LINE__ "SyncWritePacketReader::[]::size");
-    myAssert(std::strcmp((const char*)pr[1].data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
+    myAssert(strcmp((const char*)pr[1].data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
   }
 
   pw.syncWrite(Protocol::P_ID, 6)
@@ -431,10 +431,10 @@ int main(void) {
     myAssert(pr.size() == 2, "Line " S__LINE__ "SyncWritePacketReader::size");
     myAssert(pr[0].id() == 1, "Line " S__LINE__ "SyncWritePacketReader::[]::id");
     myAssert(pr[0].size() == sizeof("hello"), "Line " S__LINE__ "SyncWritePacketReader::[]::size");
-    myAssert(std::strcmp((const char*)pr[0].data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
+    myAssert(strcmp((const char*)pr[0].data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
     myAssert(pr[1].id() == 2, "Line " S__LINE__ "SyncWritePacketReader::[]::id");
     myAssert(pr[1].size() == sizeof("hello"), "Line " S__LINE__ "SyncWritePacketReader::[]::size");
-    myAssert(std::strcmp((const char*)pr[1].data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
+    myAssert(strcmp((const char*)pr[1].data(), "hello") == 0, "Line " S__LINE__ "ResponsePacketReader::data");
   }
 
   ////////////////////////////////////////////////////////////////
