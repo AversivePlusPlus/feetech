@@ -37,7 +37,7 @@ protected:
   }
 
   bool checkSize(void) const {
-    return _size == 4+_buffer[3];
+    return _size == (unsigned int)(_buffer[3]+4);
   }
 
   bool checkSum(void) const {

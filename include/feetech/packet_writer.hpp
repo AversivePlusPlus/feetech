@@ -32,9 +32,9 @@ public:
 
 public:
   void response(u8 id, const u8* buffer, unsigned int size) {
-    const u8 len = 2+size;
-    if(4+len <= _limit) {
-      _size = 4+len;
+    const unsigned int len = 2+size;
+    if(len+4 <= _limit) {
+      _size = len+4;
 
       u8 sum = 0;
 
@@ -56,9 +56,9 @@ public:
   }
 
   void ack(u8 id) {
-    const u8 len = 2;
-    if(4+len <= _limit) {
-      _size = 4+len;
+    const unsigned int len = 2;
+    if(len+4 <= _limit) {
+      _size = len+4;
 
       u8 sum = 0;
 
@@ -75,9 +75,9 @@ public:
   }
 
   void ping(u8 id) {
-    const u8 len = 2;
-    if(4+len <= _limit) {
-      _size = 4+len;
+    const unsigned int len = 2;
+    if(len+4 <= _limit) {
+      _size = len+4;
 
       u8 sum = 0;
 
@@ -95,9 +95,9 @@ public:
   }
 
   void write(u8 id, RegisterAddress<u8> reg, u8 value) {
-    const u8 len = 4;
-    if(4+len <= _limit) {
-      _size = 4+len;
+    const unsigned int len = 4;
+    if(len+4 <= _limit) {
+      _size = len+4;
 
       u8 sum = 0;
 
@@ -118,9 +118,9 @@ public:
   }
 
   void write(u8 id, RegisterAddress<u16> reg, u16 value) {
-    const u8 len = 5;
-    if(4+len <= _limit) {
-      _size = 4+len;
+    const unsigned int len = 5;
+    if(len+4 <= _limit) {
+      _size = len+4;
 
       u8 sum = 0;
 
@@ -142,9 +142,9 @@ public:
   }
 
   void write(u8 id, u8 reg, const u8* buffer, unsigned int size) {
-    const u8 len = 3+size;
-    if(4+len <= _limit) {
-      _size = 4+len;
+    const unsigned int len = 3+size;
+    if(len+4 <= _limit) {
+      _size = len+4;
 
       u8 sum = 0;
 
@@ -167,9 +167,9 @@ public:
   }
 
   void read(u8 id, u8 reg, unsigned int size) {
-    const u8 len = 4;
-    if(4+len <= _limit) {
-      _size = 4+len;
+    const unsigned int len = 4;
+    if(len+4 <= _limit) {
+      _size = len+4;
 
       u8 sum = 0;
 
@@ -294,9 +294,9 @@ protected:
   };
 
   void syncWriteBegin(u8 reg, unsigned int size) {
-    const u8 len = 4;
-    if(4+len <= _limit) {
-      _size = 4+len;
+    const unsigned int len = 4;
+    if(len+4 <= _limit) {
+      _size = len+4;
 
       u8 sum = 0;
 
