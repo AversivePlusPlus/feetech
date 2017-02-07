@@ -1,6 +1,7 @@
 PACKAGE_NAME = feetech
 
-CONAN ?= ../../tools/bin/conan
+AVERSIVE_ROOT ?= $(PWD)/../..
+CONAN ?= $(AVERSIVE_ROOT)/tools/bin/conan
 
 ################################
 .PHONY: arduino_package test all export
